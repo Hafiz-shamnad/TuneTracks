@@ -1,0 +1,26 @@
+CREATE TABLE Songs (
+    song_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    artist VARCHAR(255) NOT NULL,
+    album VARCHAR(255),
+    duration TIME,
+    genre VARCHAR(100),
+    file_path VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    age INT,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
+    user_type VARCHAR(255) DEFAULT 'USER'
+);
+
+UPDATE Users
+SET user_type = 'admin'
+WHERE username = 'admin';
+
+ALTER TABLE Songs AUTO_INCREMENT = 1;

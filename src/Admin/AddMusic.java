@@ -12,9 +12,17 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class AddMusic extends JFrame {
     private JTextField directoryPathField;
+    private JTextField titleField;
+    private JTextField genreField;
+    private JTextField durationField;
+    private JTextField artistField;
+    private JTextField imagePathField;
     private JButton browseButton;
     private JButton addButton;
     private JButton cancelButton;
@@ -22,24 +30,31 @@ public class AddMusic extends JFrame {
     public AddMusic() {
         setTitle("Add Music");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 200);
+        setSize(400, 300);
         setLocationRelativeTo(null); // Center the window
 
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(new Color(30, 30, 30)); // Dark background color
-        panel.setLayout(null);
 
-        JLabel directoryPathLabel = new JLabel("Directory Path:");
-        directoryPathLabel.setForeground(Color.WHITE); // Text color
-        directoryPathLabel.setBounds(20, 20, 120, 25);
-        panel.add(directoryPathLabel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Padding
+
+        // Directory Path
+        JLabel directoryPathLabel = new JLabel("Song Path:");
+        directoryPathLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(directoryPathLabel, gbc);
 
         directoryPathField = new JTextField();
-        directoryPathField.setBounds(140, 20, 200, 25);
-        panel.add(directoryPathField);
+        directoryPathField.setEditable(false);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(directoryPathField, gbc);
 
         browseButton = new JButton("Browse");
-        browseButton.setBounds(20, 60, 100, 25);
+        browseButton.setBounds(20, 260, 100, 25);
         browseButton.setBackground(new Color(30, 215, 96)); // Spotify green color
         browseButton.setForeground(Color.WHITE); // Text color
         browseButton.addActionListener(new ActionListener() {
@@ -48,10 +63,88 @@ public class AddMusic extends JFrame {
                 browseDirectory();
             }
         });
-        panel.add(browseButton);
+        gbc.gridx = 3;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(browseButton, gbc);
+
+        // Title
+        JLabel titleLabel = new JLabel("Title:");
+        titleLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        panel.add(titleLabel, gbc);
+
+        titleField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(titleField, gbc);
+
+        // Artist
+        JLabel artistLabel = new JLabel("Artist:");
+        artistLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        panel.add(artistLabel, gbc);
+
+        artistField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(artistField, gbc);
+
+        // Duration
+        JLabel durationLabel = new JLabel("Duration (HH:MM:SS):");
+        durationLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        panel.add(durationLabel, gbc);
+
+        durationField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(durationField, gbc);
+
+        // Genre
+        JLabel genreLabel = new JLabel("Genre:");
+        genreLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        panel.add(genreLabel, gbc);
+
+        genreField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(genreField, gbc);
+
+        // Image Path
+        JLabel imagePathLabel = new JLabel("Image Path:");
+        imagePathLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        panel.add(imagePathLabel, gbc);
+
+        imagePathField = new JTextField();
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(imagePathField, gbc);
 
         addButton = new JButton("Add");
-        addButton.setBounds(140, 60, 100, 25);
+        addButton.setBounds(140, 260, 100, 25);
         addButton.setBackground(new Color(30, 215, 96)); // Spotify green color
         addButton.setForeground(Color.WHITE); // Text color
         addButton.addActionListener(new ActionListener() {
@@ -60,10 +153,14 @@ public class AddMusic extends JFrame {
                 addMusicToDatabase();
             }
         });
-        panel.add(addButton);
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(addButton, gbc);
 
         cancelButton = new JButton("Cancel");
-        cancelButton.setBounds(260, 60, 100, 25);
+        cancelButton.setBounds(260, 260, 100, 25);
         cancelButton.setBackground(new Color(255, 0, 0)); // Red color
         cancelButton.setForeground(Color.WHITE); // Text color
         cancelButton.addActionListener(new ActionListener() {
@@ -72,14 +169,20 @@ public class AddMusic extends JFrame {
                 dispose(); // Close the window
             }
         });
-        panel.add(cancelButton);
+        gbc.gridx = 2;
+        gbc.gridy = 6;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(cancelButton, gbc);
+
+        add(panel);
 
         add(panel);
     }
 
     private void browseDirectory() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Only allow selection of files
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); // Only allow selection of files
         int option = fileChooser.showOpenDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
@@ -88,47 +191,43 @@ public class AddMusic extends JFrame {
     }
 
     private void addMusicToDatabase() {
-        String directoryPath = directoryPathField.getText();
-        System.out.println("Directory Path: " + directoryPath); // Debugging statement
-        File directory = new File(directoryPath);
-        if (!directory.exists() || !directory.isDirectory()) {
-            System.out.println("Invalid directory path or directory does not exist."); // Debugging statement
-            return;
-        }
 
-        File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    try (FileInputStream fis = new FileInputStream(file)) {
-                        byte[] musicBytes = new byte[(int) file.length()];
-                        int bytesRead = fis.read(musicBytes);
-                        if (bytesRead != -1) {
-                            System.out.println("Successfully read " + bytesRead + " bytes from file: " + file.getName()); // Debugging statement
-                            // Insert the byte array into the database
-                            insertMusicIntoDatabase(file.getName(), musicBytes);
-                        } else {
-                            System.out.println("No bytes read from file: " + file.getName()); // Debugging statement
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            JOptionPane.showMessageDialog(this, "Music added successfully!");
+        String filePath = directoryPathField.getText();
+        String artist = artistField.getText();
+        String durationString = durationField.getText();
+        String genre = genreField.getText();
+        String imagePath = imagePathField.getText();
+        String title = titleField.getText();
+
+        // Convert duration string to Time object
+        Time duration = null;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            java.util.Date parsed = format.parse(durationString);
+            duration = new Time(parsed.getTime());
+        } catch (ParseException ex) {
+            ex.printStackTrace();
         }
+        // Insert music into the database
+        insertMusicIntoDatabase(filePath, artist, duration, genre, imagePath, title);
+        JOptionPane.showMessageDialog(this, "Music added successfully!");
     }
 
-    private void insertMusicIntoDatabase(String fileName, byte[] musicBytes) {
+    private void insertMusicIntoDatabase(String filePath, String artist, Time duration, String genre, String imagePath,
+            String title) {
         try {
             // Establish database connection
             Connection conn = DatabaseConnection.getConnection();
 
             // Prepare SQL statement for inserting data
-            String query = "INSERT INTO Songs (title, song_data) VALUES (?, ?)";
+            String query = "INSERT INTO Songs (title, file_path, artist, duration, genre , image_path) VALUES (?, ?, ?, ?, ? , ?)";
             PreparedStatement statement = conn.prepareStatement(query);
-            statement.setString(1, fileName);
-            statement.setBytes(2, musicBytes);
+            statement.setString(1, title); // Assuming file path is the title for now
+            statement.setString(2, filePath); // Use the same file path for music_path
+            statement.setString(3, artist);
+            statement.setTime(4, duration);
+            statement.setString(5, genre);
+            statement.setString(6, imagePath);
 
             // Execute the statement
             statement.executeUpdate();
@@ -138,7 +237,8 @@ public class AddMusic extends JFrame {
             conn.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to add music to the database.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to add music to the database.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

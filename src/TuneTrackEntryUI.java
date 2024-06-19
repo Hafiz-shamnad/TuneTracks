@@ -15,7 +15,8 @@ public class TuneTrackEntryUI extends JFrame {
         setLocationRelativeTo(null); // Center the window
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(new Color(30, 30, 30));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding
 
         // Title Panel
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -28,8 +29,16 @@ public class TuneTrackEntryUI extends JFrame {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         // Button Panel
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 20, 0));
-        buttonPanel.setBackground(Color.WHITE);
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setBackground(new Color(30, 30, 30));
+
+        // GridBagConstraints for buttons
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         JButton loginButton = new JButton("Login");
         JButton registerButton = new JButton("Register");
         loginButton.setBackground(new Color(30, 215, 96));
@@ -38,8 +47,11 @@ public class TuneTrackEntryUI extends JFrame {
         registerButton.setForeground(Color.WHITE);
         loginButton.setFont(new Font("Arial", Font.BOLD, 16));
         registerButton.setFont(new Font("Arial", Font.BOLD, 16));
-        buttonPanel.add(loginButton);
-        buttonPanel.add(registerButton);
+
+        buttonPanel.add(loginButton, gbc);
+
+        gbc.gridx = 1; // Next column
+        buttonPanel.add(registerButton, gbc);
 
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
 

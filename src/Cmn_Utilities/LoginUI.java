@@ -1,19 +1,27 @@
 package Cmn_Utilities;
 
+import Admin.AdminPortal;
+import Jdbc_Connector.DatabaseConnection;
+import User.UserView;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class Login extends JFrame {
+public class LoginUI extends JFrame {
+
+    static boolean admin = false;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
-    private JButton registerButton;
     private JLabel errorLabel;
 
-    public Login() {
+    public LoginUI() {
         setTitle("Music Management System - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 350); // Increased height for better layout
@@ -79,14 +87,6 @@ public class Login extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(loginButton, gbc);
 
-        registerButton = new JButton("Register");
-        registerButton.setBackground(new Color(30, 215, 96)); // Spotify green color
-        registerButton.setForeground(Color.WHITE); // Text color
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2;
-        panel.add(registerButton, gbc);
-
         add(panel);
 
         // Add action listeners
@@ -96,46 +96,67 @@ public class Login extends JFrame {
                 authenticateUser();
             }
         });
-
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openRegistrationPage();
-            }
-        });
     }
 
     private void authenticateUser() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 
-        // Dummy authentication (replace with actual logic)
-        if (username.equals("admin") && password.equals("admin")) {
-            // Successful login
-            JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            // Open main application window
-            openMainApp();
+        // Perform login authentication logic here
+        // For demonstration, check if username is "admin" and password is "admin"
+
+        if (validateUser(username, password)) {
+            // Open Admin Entry UI
+            dispose(); // Close the login window
+            if (admin) {
+                new AdminPortal().setVisible(true);
+            } else {
+                new UserView().setVisible(true);
+            }
         } else {
-            // Invalid credentials
-            errorLabel.setText("Invalid username or password.");
+            dispose(); // Close the login window
+            JOptionPane.showMessageDialog(null, "Login Failed! Try again."); //http://surl.li/tarlg
+            new LoginUI().setVisible(true);
         }
     }
 
-    private void openRegistrationPage() {
-        // Open registration page
-        JOptionPane.showMessageDialog(this, "Registration page will open here.", "Registration", JOptionPane.INFORMATION_MESSAGE);
-    }
+    public static boolean validateUser(String username, String password) {
+        // SQL query to retrieve user information based on the provided username
+        String sql = "SELECT * FROM Users WHERE username = ?";
 
-    private void openMainApp() {
-        // Open main application window
-        JOptionPane.showMessageDialog(this, "Main application will open here.", "Main App", JOptionPane.INFORMATION_MESSAGE);
+        // Create a PreparedStatement with the SQL query
+        try (
+                PreparedStatement preparedStatement = DatabaseConnection.getConnection().prepareStatement(sql)) {
+            preparedStatement.setString(1, username);
+
+            // Execute the query and retrieve the result set
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // Retrieve the password stored in the database
+                    String storedPassword = resultSet.getString("password");
+                    String usertype = resultSet.getString("user_type");
+                    // Compare the stored password with the provided password
+                    if (password.equals(storedPassword)) {
+                        if (usertype.equals(("admin"))) {
+                            admin = true;
+                        }
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle any SQL exceptions
+        }
+
+        // If the username doesn't exist or passwords don't match, user is not validated
+        return false;
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Login entryUI = new Login();
+            LoginUI entryUI = new LoginUI();
             entryUI.setVisible(true);
         });
     }
 }
-

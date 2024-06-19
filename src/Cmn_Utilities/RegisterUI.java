@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Registration extends JFrame {
+public class RegisterUI extends JFrame {
     private JTextField usernameField;
     private JTextField nameField;
     private JTextField ageField;
@@ -19,7 +19,7 @@ public class Registration extends JFrame {
     private JButton registerButton;
     private JButton cancelButton;
 
-    public Registration() {
+    public RegisterUI() {
         setTitle("Registration");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(400, 250);
@@ -73,7 +73,7 @@ public class Registration extends JFrame {
         panel.add(ageField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setForeground(Color.WHITE); // Text color
+        passwordLabel.setForeground(Color.WHITE); //http://surl.li/tarlg
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
@@ -126,7 +126,7 @@ public class Registration extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 registerUser();
                 dispose();
-                new Login().setVisible(true);
+                new LoginUI().setVisible(true);
             }
         });
 
@@ -179,7 +179,7 @@ public class Registration extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Registration registrationUI = new Registration();
+            RegisterUI registrationUI = new RegisterUI();
             registrationUI.setVisible(true);
         });
     }
